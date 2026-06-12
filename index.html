@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Code 5 Vocabulary Station (Year Seven/Eight)</title>
+    <title>Year Seven/Eight Vocabulary Station</title>
     <style>
         :root { --primary: #2563eb; --success: #059669; --danger: #dc2626; --bg: #f1f5f9; --card-bg: #ffffff; --text: #0f172a; }
         
@@ -218,7 +218,7 @@
         const card = document.getElementById('gameCard');
         
         if (currentStep === 0) {
-            card.innerHTML = `<h2>Vocabulary Station</h2><p style="font-size: 1.2rem;">Enter your name to begin:</p><input type="text" id="nameInput" class="student-input" placeholder="Your Name..."><br><button class="action-btn" onclick="submitName()">Enter Station</button>`;
+            card.innerHTML = `<h2>Year Seven/Eight Vocabulary Station</h2><p style="font-size: 1.2rem;">Enter your name to begin:</p><input type="text" id="nameInput" class="student-input" placeholder="Your Name..."><br><button class="action-btn" onclick="submitName()">Enter Station</button>`;
             document.getElementById('nameInput').focus();
         } else if (currentStep === 0.5) {
             let buttons = "";
