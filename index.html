@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code 5 Vocabulary Station (Year Seven/Eight)</title>
+    <style>
+        :root { --primary: #2563eb; --success: #059669; --danger: #dc2626; --bg: #f1f5f9; --card-bg: #ffffff; --text: #0f172a; }
+        
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 10px; }
+        
+        .main-wrapper { width: 100%; max-width: 850px; margin: 15px auto; display: block; }
+        
+        .student-card { background: var(--card-bg); border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); padding: 30px; text-align: center; box-sizing: border-box; display: block; position: relative; }
+        
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; width: 100%; margin-top: 15px; clear: both; }
+        
+        .menu-btn { background-color: #f8fafc; color: var(--text); border: 2px solid #e2e8f0; padding: 16px; font-size: 1.02rem; border-radius: 10px; cursor: pointer; font-weight: bold; text-align: left; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; width: 100%; position: relative; z-index: 10; transition: all 0.2s; }
+        .menu-btn:hover { background-color: var(--primary); color: white; border-color: var(--primary); transform: translateY(-2px); }
+        
+        .top-navigation-bar { display: block; width: 100%; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 20px; text-align: left; box-sizing: border-box; }
+        .nav-inner-layout { display: flex; justify-content: space-between; align-items: center; }
+        
+        .back-nav-btn { background: #e2e8f0; color: #475569; border: none; padding: 8px 14px; font-size: 0.9rem; font-weight: bold; border-radius: 6px; cursor: pointer; transition: background 0.2s; }
+        .back-nav-btn:hover { background: #cbd5e1; color: var(--text); }
+        
+        .target-word { font-size: 4.2rem; font-weight: 800; letter-spacing: 1px; margin: 15px 0; transition: opacity 0.5s ease; color: var(--text); }
+        .hidden-word { opacity: 0 !important; }
+        
+        .rule-box { background: #f8fafc; border-left: 5px solid var(--primary); padding: 20px; border-radius: 0 8px 8px 0; font-size: 1.15rem; margin: 20px 0; width: 100%; box-sizing: border-box; text-align: left; line-height: 1.6; }
+        .rule-box strong { color: var(--primary); }
+        .rule-box ul { margin: 8px 0; padding-left: 20px; }
+        
+        .lock-container { background: #fef2f2; border: 2px dashed var(--danger); border-radius: 8px; padding: 15px; margin: 0 auto; width: 100%; max-width: 400px; box-sizing: border-box; }
+        
+        .student-input { font-size: 1.5rem; padding: 12px; text-align: center; border: 3px solid #cbd5e1; border-radius: 8px; outline: none; width: 80%; max-width: 350px; display: inline-block; box-sizing: border-box; }
+        .teacher-password-input { font-size: 1.3rem; padding: 8px; text-align: center; border: 3px solid #cbd5e1; border-radius: 8px; outline: none; width: 220px; display: inline-block; box-sizing: border-box; }
+        
+        button.action-btn { background-color: var(--primary); color: white; border: none; padding: 12px 28px; font-size: 1.1rem; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 20px; display: inline-block; }
+        button.action-btn:hover { background-color: #1d4ed8; }
+        
+        .sentence-prompt { font-size: 1.6rem; margin-bottom: 25px; line-height: 1.6; text-align: center; }
+        .feedback { font-size: 1.2rem; font-weight: bold; margin-top: 15px; }
+        .feedback.success { color: var(--success); }
+        .feedback.error { color: var(--danger); }
+    </style>
+</head>
+<body>
+
+<div class="main-wrapper">
+    <div class="student-card" id="gameCard"></div>
+</div>
+
+<script>
+    const MASTER_SPELLING_RULES = {
+        "ei_vowel_team": "🏫 <strong>Vowel Team 'ei' Lesson (List 57):</strong><br>The vowel team 'ei' can represent both the <strong>long /a/ sound</strong> (as in <em>vein</em>) and the <strong>long /e/ sound</strong> (as in <em>receive</em>). Watch out for the 'i before e except after c' variant layout here.<br><ul><li>Examples: vein, veil, rein, beige, receive, deceive, perceive, either, neither, seize, caffeine.</li></ul>",
+        "ou_short_u": "🏫 <strong>Vowel Team 'ou' Short /u/ Lesson (List 58):</strong><br>In these specific words, the vowel team 'ou' creates an unexpected, short <strong>/u/ sound</strong> (like the 'u' in <em>up</em>).<br><ul><li>Examples: touch, young, double, trouble, couple, country, cousin, courage, encourage, tough, rough, enough.</li></ul>",
+        "gh_ph_f_sound": "🏫 <strong>'gh' and 'ph' as /f/ Lesson (List 59):</strong><br>The digraph components 'gh' and 'ph' function structurally to create a clear <strong>/f/ sound</strong> inside base words.<br><ul><li>Examples: laugh, cough, tough, rough, trough, lymph, phase, phrase, sphere, sphinx, alphabet, amphibian, paragraph, triumph, physics.</li></ul>",
+        "w_effect_rule": "🏫 <strong>The 'W Effect' Lesson (List 60):</strong><br>Phonetic constraint rule: After the sound layout of a <strong>'w' or 'qu'</strong>, the short sound /o/ is systematically represented by the letter <strong>'a'</strong>.<br><ul><li>Examples: want, was, wander, washing, wand, swamp, watched, wallet, wasp, swallow, quad, squash, squat, quarry, quarrel.</li></ul>",
+        "advanced_morphology_prefixes": "🏫 <strong>Advanced Prefixes Lesson (List 61):</strong><br>Morphology structures alter root meanings: <strong>trans-</strong> (across/beyond), <strong>non-</strong> (not), <strong>fore-</strong> (before/in front), <strong>inter-</strong> (among/between), and <strong>over-</strong> (above/too many).<br><ul><li>Examples: transform, transport, nonfat, nonfiction, forehead, foresee, interact, international, overcast, overdo.</li></ul>",
+        "ch_french_greek": "🏫 <strong>The Three Sounds of 'ch' Lesson (List 62):</strong><br>The spelling layout 'ch' generates distinct sound paths: <strong>/sh/</strong> sounds indicate words of <em>French origin</em>, while <strong>/k/</strong> sounds indicate words of <em>Greek origin</em>.<br><ul><li>Examples (/sh/): chef, champagne, chalet, machine, brochure, parachute, chauffeur.</li><li>Examples (/k/): chaos, ache, anchor, echo, chemist, chorus, chemical, orchestra, technology.</li></ul>",
+        "or_sound_er": "🏫 <strong>'or' Representing /er/ Lesson (List 63):</strong><br>In these words, the layout 'or' abandons its regular pattern and represents the vocal sound <strong>/er/</strong> (as heard in <em>world</em>).<br><ul><li>Examples: word, worm, worst, work, homework, workplace, worth, worthy, fireworks, world, worthless, framework.</li></ul>",
+        "irregular_plurals": "🏫 <strong>Irregular Plurals Lesson (List 64):</strong><br>These special words do not follow standard plural structures. They change their internal vowels or use historic classical ending transformations.<br><ul><li>Examples: woman ➔ women, person ➔ people, cactus ➔ cacti, crisis ➔ crises, axis ➔ axes, phenomenon ➔ phenomena, fungus ➔ fungi, radius ➔ radii.</li></ul>",
+        "gn_silent_g_gh_hard_g": "🏫 <strong>Digraph Markers 'gn' and 'gh' Lesson (List 65):</strong><br>Structural behaviors: In <strong>'gn'</strong> layouts, the 'g' is silent and signals a /n/ sound. In <strong>'gh'</strong> at the start of base units, it marks a hard /g/ sound.<br><ul><li>Examples ('gn'): gnarl, gnash, gnat, gnome, gnaw, sign, foreign, design, campaign, sovereign.</li><li>Examples ('gh'): gherkin, ghetto, ghost, aghast, spaghetti, yoghurt, ghastly.</li></ul>",
+        "number_prefixes": "🏫 <strong>Numerical Prefixes Lesson (List 67):</strong><br>Morphology markers related directly to number concepts: <strong>uni-</strong> means one, <strong>bi-</strong> means two, and <strong>tri-</strong> means three.<br><ul><li>Examples: unit, unicycle, unicorn, universe, uniform, bicycle, biceps, biathlon, bilingual, triangle, tripod, tricycle, triplets, trio.</li></ul>",
+        "able_ible_suffixes": "🏫 <strong>Suffixes 'able' and 'ible' Lesson (List 68):</strong><br>Both of these suffix layouts are placed at the end of base sets to mean <strong>'capable of being'</strong> or 'fit for'.<br><ul><li>Examples (-able): available, reliable, comfortable, inflatable, memorable, capable.</li><li>Examples (-ible): incredible, sensible, audible, responsible, visible, possible, edible, flexible.</li></ul>",
+        "ure_suffix_action": "🏫 <strong>The Suffix 'export-ure' Lesson (List 69):</strong><br>The structural suffix layout <strong>'-ure'</strong> is added to root units to denote an active action, process, or a physical final result.<br><ul><li>Examples: capture, vulture, puncture, moisture, picture, mixture, creature, rupture, adventure, furniture, structure, temperature.</li></ul>"
+    };
+
+    const DATA_LISTS = [
+        {
+            title: "List 57: Vowel Team 'ei'",
+            words: [
+                { word: "vein", rule: "ei_vowel_team", sentence: "The nurse carefully located a safe __ in my arm to draw blood." },
+                { word: "beige", rule: "ei_vowel_team", sentence: "We decided to paint the kitchen walls a neutral light __ color." },
+                { word: "receive", rule: "ei_vowel_team", sentence: "Did you __ the package that was delivered to the office this morning?" },
+                { word: "perceive", rule: "ei_vowel_team", sentence: "It can sometimes be difficult to __ changes in temperature right away." },
+                { word: "neither", rule: "ei_vowel_team", sentence: "My brother wants chocolate, but __ of my sisters cares for it." },
+                { word: "caffeine", rule: "ei_vowel_team", sentence: "Coffee contains a natural stimulant compound known as __." }
+            ]
+        },
+        {
+            title: "List 58: Vowel Team 'ou' (/u/)",
+            words: [
+                { word: "young", rule: "ou_short_u", sentence: "A __ cub stayed close to its mother bear throughout the forest trek." },
+                { word: "double", rule: "ou_short_u", sentence: "We had to __ the recipe ingredients to make enough food for everyone." },
+                { word: "trouble", rule: "ou_short_u", sentence: "If you have __ fixing the computer, look at the instruction manual." },
+                { word: "country", rule: "ou_short_u", sentence: "We flew across the ocean to visit a fascinating new foreign __." },
+                { word: "courage", rule: "ou_short_u", sentence: "The brave explorer showed incredible __ when facing the storm." },
+                { word: "enough", rule: "ou_short_u", sentence: "Make sure you drink __ fresh water during hot summer days." }
+            ]
+        },
+        {
+            title: "List 59: 'gh' and 'ph' as /f/",
+            words: [
+                { word: "laugh", rule: "gh_ph_f_sound", sentence: "The comedian told a brilliant joke that made the whole audience __." },
+                { word: "cough", rule: "gh_ph_f_sound", sentence: "Cover your mouth when you __ to avoid spreading cold germs." },
+                { word: "trough", rule: "gh_ph_f_sound", sentence: "The farm animals drank cool water out of a long metal __." },
+                { word: "phrase", rule: "gh_ph_f_sound", sentence: "Underline the key vocabulary __ inside the textbook paragraph." },
+                { word: "sphere", rule: "gh_ph_f_sound", sentence: "A perfectly round 3D structural shape is geometric view of a __." },
+                { word: "alphabet", rule: "gh_ph_f_sound", sentence: "There are twenty-six letters contained inside the English __." }
+            ]
+        },
+        {
+            title: "List 60: The W Effect",
+            words: [
+                { word: "wander", rule: "w_effect_rule", sentence: "Be careful not to __ too far away from our main camping group." },
+                { word: "swamp", rule: "w_effect_rule", sentence: "Alligators swim silently through the murky water of the muddy __." },
+                { word: "wallet", rule: "w_effect_rule", sentence: "He safely stored his driver's license and money inside his leather __." },
+                { word: "swallow", rule: "w_effect_rule", sentence: "Chew your food completely before attempting to safely __ it." },
+                { word: "squash", rule: "w_effect_rule", sentence: "We picked fresh yellow summer __ from our organic garden patch." },
+                { word: "quarry", rule: "w_effect_rule", sentence: "Workers excavated massive blocks of granite stone out of the deep __." }
+            ]
+        },
+        {
+            title: "List 61: Advanced Prefixes",
+            words: [
+                { word: "transform", rule: "advanced_morphology_prefixes", sentence: "The caterpillar will completely __ into a gorgeous butterfly." },
+                { word: "transport", rule: "advanced_morphology_prefixes", sentence: "Big cargo ships are used to __ heavy freight goods across oceans." },
+                { word: "nonfiction", rule: "advanced_morphology_prefixes", sentence: "I love reading informational __ books about space and history." },
+                { word: "forehead", rule: "advanced_morphology_prefixes", sentence: "She wiped sweat from her __ after finishing the long marathon run." },
+                { word: "interact", rule: "advanced_morphology_prefixes", sentence: "Students are encouraged to work in teams and __ with one another." },
+                { word: "overcast", rule: "advanced_morphology_prefixes", sentence: "The sky looks gloomy and __, so it will likely rain this afternoon." }
+            ]
+        },
+        {
+            title: "List 62: Sounds of 'ch'",
+            words: [
+                { word: "chef", rule: "ch_french_greek", sentence: "The head __ prepared a spectacular multi-course meal for the guests." },
+                { word: "brochure", rule: "ch_french_greek", sentence: "We picked up an informative travel __ describing the island resort." },
+                { word: "parachute", rule: "ch_french_greek", sentence: "The skydiver pulled a cord to deploy his nylon emergency __." },
+                { word: "chaos", rule: "ch_french_greek", sentence: "Total structural __ broke out when the farm gates accidentally opened." },
+                { word: "chemist", rule: "ch_french_greek", sentence: "The research __ tested a new chemical layout inside the clean laboratory." },
+                { word: "orchestra", rule: "ch_french_greek", sentence: "The musical __ played a stunning symphony using violins and flutes." }
+            ]
+        },
+        {
+            title: "List 63: 'or' as /er/",
+            words: [
+                { word: "worst", rule: "or_sound_er", sentence: "That was easily the __ thunder storm our coastal town has seen all year." },
+                { word: "homework", rule: "or_sound_er", sentence: "Remember to complete your math __ before dinner time arrives." },
+                { word: "worthy", rule: "or_sound_er", sentence: "The charity group raised funds for an incredibly __ community cause." },
+                { word: "fireworks", rule: "or_sound_er", sentence: "Brilliant flashes of light filled the night sky during the __ show." },
+                { word: "world", rule: "or_sound_er", sentence: "An old structural globe maps out the continents across our entire __." },
+                { word: "framework", rule: "or_sound_er", sentence: "Builders constructed a strong wooden __ before laying down the roof walls." }
+            ]
+        },
+        {
+            title: "List 64: Irregular Plurals",
+            words: [
+                { word: "women", rule: "irregular_plurals", sentence: "Three professional __ founded the scientific research firm." },
+                { word: "people", rule: "irregular_plurals", sentence: "A massive crowd of excited __ gathered outside for the live music concert." },
+                { word: "cacti", rule: "irregular_plurals", sentence: "Desert environments are famous for supporting unique species of spikey __." },
+                { word: "crises", rule: "irregular_plurals", sentence: "Emergency responders are highly trained to handle unexpected global __." },
+                { word: "fungi", rule: "irregular_plurals", sentence: "Mushrooms and molds belong to a distinct biological group called __." },
+                { word: "radii", rule: "irregular_plurals", sentence: "In geometry class, we had to measure the identical __ of three circles." }
+            ]
+        },
+        {
+            title: "List 65: Digraphs 'gn' / 'gh'",
+            words: [
+                { word: "gnome", rule: "gn_silent_g_gh_hard_g", sentence: "A cheerful ceramic garden __ sat right next to the flower patch." },
+                { word: "gnaw", rule: "gn_silent_g_gh_hard_g", sentence: "The puppy loved to stubbornly __ on his favorite rubber chew toy." },
+                { word: "design", rule: "gn_silent_g_gh_hard_g", sentence: "Engineers worked around the clock to draft a blueprint __ for the bridge." },
+                { word: "campaign", rule: "gn_silent_g_gh_hard_g", sentence: "Our school started a successful environmental recycling awareness __." },
+                { word: "ghost", rule: "gn_silent_g_gh_hard_g", sentence: "The old spooky mystery tale described a friendly __ haunting a castle." },
+                { word: "spaghetti", rule: "gn_silent_g_gh_hard_g", sentence: "We cooked a traditional Italian dinner featuring hot tomato sauce and __." }
+            ]
+        },
+        {
+            title: "List 67: Number Prefixes",
+            words: [
+                { word: "unicycle", rule: "number_prefixes", sentence: "The skilled circus acrobat balanced perfectly while riding a tall __." },
+                { word: "universe", rule: "number_prefixes", sentence: "Astronomers use massive telescopes to explore the vast layout of our __." },
+                { word: "bicycle", rule: "number_prefixes", sentence: "Make sure you wear your safety helmet whenever you ride your __." },
+                { word: "bilingual", rule: "number_prefixes", sentence: "She can speak English and Spanish fluently because she is completely __." },
+                { word: "triangle", rule: "number_prefixes", sentence: "A geometric three-sided layout pattern is defined as a __." },
+                { word: "triplets", rule: "number_prefixes", sentence: "The family was thrilled by the birth of healthy identical __ babies." }
+            ]
+        },
+        {
+            title: "List 68: Suffix 'able' / 'ible'",
+            words: [
+                { word: "available", rule: "able_ible_suffixes", sentence: "Please let me know what time slot you have __ for our project meeting." },
+                { word: "reliable", rule: "able_ible_suffixes", sentence: "Our old truck isn't fast, but it has always been highly __ in winter." },
+                { word: "comfortable", rule: "able_ible_suffixes", sentence: "I sat down inside a plush, incredibly __ armchair next to the fire." },
+                { word: "incredible", rule: "able_ible_suffixes", sentence: "The view from the top of the snow-capped mountain peak was absolutely __." },
+                { word: "sensible", rule: "able_ible_suffixes", sentence: "Wearing warm boots in a heavy snowstorm is a very __ choice to make." },
+                { word: "visible", rule: "able_ible_suffixes", sentence: "The distant ships were barely __ through the thick ocean fog." }
+            ]
+        },
+        {
+            title: "List 69: Suffix 'ure'",
+            words: [
+                { word: "puncture", rule: "ure_suffix_action", sentence: "A sharp rusty nail caused a flat tire __ on my bicycle wheel." },
+                { word: "moisture", rule: "ure_suffix_action", sentence: "Morning dew left a thin layer of damp __ across the green grass lawn." },
+                { word: "creature", rule: "ure_suffix_action", sentence: "The deep ocean floor is home to many strange glowing __ types." },
+                { word: "adventure", rule: "ure_suffix_action", sentence: "Our hiking trip through the dense jungle was a thrilling outdoor __." },
+                { word: "structure", rule: "ure_suffix_action", sentence: "Architects drafted a modern steel __ to withstand major earthquakes." },
+                { word: "temperature", rule: "ure_suffix_action", sentence: "The thermometer showed that the outdoor __ had dropped below freezing." }
+            ]
+        }
+    ];
+
+    const formViewURL = "https://docs.google.com/forms/d/e/1FAIpQLSddB0NQFaIBv9x-feJucH_YGDwHb8suDI9h1ShPOv1yGzCCXQ/viewform";
+    const nameKey = "entry.421008981"; const wordsKey = "entry.1429911539"; const incorrectKey = "entry.407995943"; const scoreKey = "entry.211442136";
+    
+    let activeLessonWords = []; let currentWordIndex = 0; let currentStep = 0; 
+    let activeLessonLabel = ""; let studentName = "";
+    let correctWordsList = []; let incorrectWordsList = []; let correctCount = 0;
+
+    function resetToListMenu() {
+        currentStep = 0.5;
+        renderStep();
+    }
+
+    function renderStep() {
+        const card = document.getElementById('gameCard');
+        
+        if (currentStep === 0) {
+            card.innerHTML = `<h2>Vocabulary Station</h2><p style="font-size: 1.2rem;">Enter your name to begin:</p><input type="text" id="nameInput" class="student-input" placeholder="Your Name..."><br><button class="action-btn" onclick="submitName()">Enter Station</button>`;
+            document.getElementById('nameInput').focus();
+        } else if (currentStep === 0.5) {
+            let buttons = "";
+            DATA_LISTS.forEach((listObj, index) => {
+                buttons += `<button class="menu-btn" onclick="launchRuleByIndex(${index})"><span style="display:block; margin-bottom: 8px;">${listObj.title}</span><span style="font-size:0.85rem; font-weight:normal; color:#64748b;">(${listObj.words.length} words)</span></button>`;
+            });
+            card.innerHTML = `<h2>Welcome, ${studentName}!</h2><p style="font-size: 1.2rem; margin-bottom:10px;">Select your spelling list:</p><div class="menu-grid">${buttons}</div>`;
+        } else {
+            const currentData = activeLessonWords[currentWordIndex];
+            
+            let progressHTML = `
+                <div class="top-navigation-bar">
+                    <div class="nav-inner-layout">
+                        <span style="font-weight:bold; color:var(--primary); font-size:1.1rem;">${activeLessonLabel} &bull; Word ${currentWordIndex + 1} of ${activeLessonWords.length}</span>
+                        <button class="back-nav-btn" onclick="resetToListMenu()">⬅ Go Back to Lists</button>
+                    </div>
+                </div>`;
+                
+            let ruleExplanation = MASTER_SPELLING_RULES[currentData.rule] || `💡 <strong>Pattern Rule:</strong> Focus on spelling your target words carefully!`;
+
+            if (currentStep === 1) {
+                card.innerHTML = `${progressHTML}<div class="target-word">${currentData.word}</div><div class="rule-box">${ruleExplanation}</div><button class="action-btn" onclick="nextStep()">I Studied It</button>`;
+            } else if (currentStep === 2) {
+                let hint = currentWordIndex === 0 ? "The starting password is: <strong>tiger</strong>" : "Type the previous word you just spelled to unlock your notebook work!";
+                let correctPasswordValue = currentWordIndex === 0 ? "tiger" : activeLessonWords[currentWordIndex - 1].word;
+                
+                card.innerHTML = `${progressHTML}<div style="font-size: 1.4rem; font-weight: bold; color: var(--danger);">Notebook Practice</div><ol style="text-align: left; margin: 20px auto; max-width: 85%; font-size: 1.2rem; line-height: 1.6;"><li>Look closely at the word: <strong>${currentData.word}</strong></li><li>Write it down on paper 5 times.</li></ol><div class="lock-container"><label style="font-weight: bold; display:block; margin-bottom:5px;">Password Lock</label><span style="font-size:0.9rem; color:#64748b; display:block; margin-bottom:10px;">${hint}</span><input type="text" id="passInput" class="teacher-password-input" placeholder="Password..." autocomplete="off"><br><button id="lockBtn" style="margin-top:10px; padding: 8px 20px; background-color: var(--danger); border:none; color:white; font-weight:bold; border-radius:6px; cursor:pointer;">Unlock</button><div id="lockFeedback" class="feedback"></div></div>`;
+                
+                document.getElementById('passInput').focus();
+                document.getElementById('lockBtn').onclick = function() {
+                    let enteredPass = document.getElementById('passInput').value.trim().toLowerCase().replace(/[^a-zA-Z0-9]/g, "");
+                    if(enteredPass === correctPasswordValue.toLowerCase().replace(/[^a-zA-Z0-9]/g, "")) { nextStep(); }
+                    else { const fb = document.getElementById('lockFeedback'); fb.className = "feedback error"; fb.innerHTML = "Incorrect password lock."; }
+                };
+            } else if (currentStep === 3) {
+                card.innerHTML = `${progressHTML}<p style="font-size:1.3rem;">Study before it disappears...</p><div class="target-word" id="fadingWord">${currentData.word}</div>`;
+                setTimeout(() => { document.getElementById('fadingWord')?.classList.add('hidden-word'); setTimeout(() => { nextStep(); }, 800); }, 1800);
+            } else if (currentStep === 4) {
+                card.innerHTML = `${progressHTML}<div class="sentence-prompt">${currentData.sentence}</div><input type="text" id="testInput" class="student-input" placeholder="Spell here" autocomplete="off"><br><button class="action-btn" onclick="checkTestAnswer()">Verify Spelling</button><div id="testFeedback" class="feedback"></div>`;
+                document.getElementById('testInput').focus();
+            }
+        }
+    }
+
+    function submitName() { const val = document.getElementById('nameInput').value.trim(); if(val) { studentName = val; currentStep = 0.5; renderStep(); } }
+    
+    function launchRuleByIndex(index) { 
+        const selectedList = DATA_LISTS[index];
+        activeLessonWords = selectedList.words; 
+        activeLessonLabel = selectedList.title; 
+        currentWordIndex = 0; 
+        correctWordsList = []; 
+        incorrectWordsList = []; 
+        correctCount = 0; 
+        currentStep = 1; 
+        renderStep(); 
+    }
+    
+    function nextStep() { currentStep++; renderStep(); }
+    
+    function checkTestAnswer() {
+        const originalEntered = document.getElementById('testInput').value.trim();
+        const enteredEvaluated = originalEntered.toLowerCase().replace(/[^a-zA-Z-]/g, "");
+        const correctEvaluated = activeLessonWords[currentWordIndex].word.toLowerCase().replace(/[^a-zA-Z-]/g, "");
+        
+        if(enteredEvaluated === correctEvaluated) { 
+            correctCount++; 
+            correctWordsList.push(activeLessonWords[currentWordIndex].word); 
+        } else { 
+            incorrectWordsList.push(`${originalEntered || '[Blank]'} (${activeLessonWords[currentWordIndex].word})`); 
+        }
+        
+        const fb = document.getElementById('testFeedback');
+        fb.className = enteredEvaluated === correctEvaluated ? "feedback success" : "feedback error";
+        fb.innerHTML = enteredEvaluated === correctEvaluated ? "Correct!" : `Incorrect. Spelling is "${activeLessonWords[currentWordIndex].word}".`;
+        
+        setTimeout(() => { if (currentWordIndex < activeLessonWords.length - 1) { currentWordIndex++; currentStep = 1; renderStep(); } else { showEndScreen(); } }, 2200);
+    }
+
+    function showEndScreen() {
+        document.getElementById('gameCard').innerHTML = `
+            <div class="top-navigation-bar">
+                <div class="nav-inner-layout" style="justify-content: flex-end;">
+                    <button class="back-nav-btn" onclick="resetToListMenu()">🏠 Home Menu</button>
+                </div>
+            </div>
+            <h1 style="color: var(--success);">Practice Complete</h1>
+            <p>Great job, ${studentName}!</p>
+            <p>Score: <strong>${correctCount} out of ${activeLessonWords.length}</strong></p>
+            <div id="submissionZone"><button class="action-btn" onclick="openGoogleFormLink()">Send Progress Form</button></div>`;
+    }
+
+    function openGoogleFormLink() {
+        let finalScore = `${correctCount} out of ${activeLessonWords.length}`;
+        let filledURL = `${formViewURL}?usp=pp_url&${nameKey}=${encodeURIComponent(studentName)}&${wordsKey}=${encodeURIComponent(correctWordsList.join(', ') || "None")}&${incorrectKey}=${encodeURIComponent(incorrectWordsList.join(', ') || "None")}&${scoreKey}=${encodeURIComponent(finalScore)}`;
+        window.open(filledURL, '_blank');
+        document.getElementById('submissionZone').innerHTML = `<p style="color: var(--success); font-weight:bold;">Form opened! Click submit on that page to finish.</p>`;
+    }
+
+    renderStep();
+</script>
+</body>
+</html>
